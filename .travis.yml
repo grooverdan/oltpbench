@@ -1,5 +1,9 @@
 sudo: false
 
+cache:
+  directories:
+    - lib
+
 language: java
 jdk:
   - oraclejdk8
