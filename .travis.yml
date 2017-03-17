@@ -11,6 +11,10 @@ jdk:
   - oraclejdk7
   - openjdk7
 
+services:
+  - mysql
+  - postgres
+
 install: echo "Done"
-before_script: echo "Done"
+before_script: ls -la  /usr/lib/jvm/
 script: ant junit
