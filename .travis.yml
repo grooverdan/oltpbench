@@ -8,8 +8,8 @@ cache:
 language: java
 jdk:
   - oraclejdk8
-  - oraclejdk9
   - openjdk8
+ #  - oraclejdk9 - https://github.com/oltpbenchmark/oltpbench/issues/137
 
 services:
   - mysql
