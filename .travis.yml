@@ -12,16 +12,25 @@ jdk:
  #  - oraclejdk9 - https://github.com/oltpbenchmark/oltpbench/issues/137
 
 # https://docs.travis-ci.com/user/database-setup/#Using-a-different-PostgreSQL-Version
-addons:
-  postgresql:
-    - "9.4"
-    - "9.5"
-    - "9.6"
-  mariadb:
-    - "5.5"
-    - "10.0"
-    - "10.1"
-    - "10.2"
+
+matrix:
+  include:
+    - addons:
+      mariadb: 5.5
+    - addons:
+      mariadb: 10.0
+    - addons:
+      mariadb: 10.1
+    - addons:
+      mariadb: 10.2
+    - addons:
+      postgresql: 9.4
+    - addons:
+      postgresql: 9.5
+    - addons:
+      postgresql: 9.6
+    - addons:
+      postgresql: 9.7
 
 services:
   - mysql
