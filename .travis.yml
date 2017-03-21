@@ -55,8 +55,8 @@ env:
 
 
 install:
-  - if [ $DB == mariadb ]; then mysql -e "SELECT VERSION()"
-    elif [ $DB == postgres ]; then psql -c "SELECT VERSION()" -U travis
+  - if [ $DB == mariadb ]; then mysql -e "SELECT VERSION()";
+    elif [ $DB == postgres ]; then psql -c "SELECT VERSION()" -U travis;
     fi
   - netstat -lant || ss -tn
   - for db in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
@@ -66,8 +66,8 @@ install:
       [ $DB == mariadb ] && mysql -e "CREATE DATABASE IF NOT EXISTS $db" ;
       [ $DB == postgres ] && psql -c "create database $db" -U postgres ;
     done
-  - if [ $DB == mariadb ]; then mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'"
-    elif [ $DB == postgres ] then psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis
+  - if [ $DB == mariadb ]; then mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'";
+    elif [ $DB == postgres ] then psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis;
     fi
 
 # MySQL create user is probably one of the trust-container bugs for MySQL
@@ -80,18 +80,22 @@ install:
 script:
   - ant junit
   - if [ $DB == mariadb ]; then
-      URLBASE=jdbc:mysql://localhost:3306/
-      DRIVER=com.mysql.jdbc.Driver
-      TYPE=mysql
+      URLBASE=jdbc:mysql://localhost:3306/ ;
+      DRIVER=com.mysql.jdbc.Driver ;
+      TYPE=mysql ;
     elif [ $DB == postgres ]; then
-      URLBASE=jdbc:postgresql://localhost:5432/
-      DRIVER=jdbc:org.postgresql.Driver
-      TYPE=postgres
+      URLBASE=jdbc:postgresql://localhost:5432/ ;
+      DRIVER=jdbc:org.postgresql.Driver ;
+      TYPE=postgres ;
     fi
   - for test in sample_epinions_config.xml
+                sample_tatp_config.xml
+                sample_linkbench_config.xml
+                sample_tpcc_config.xml
                 sample_auctionmark_config.xml
                 sample_voter_config.xml;
     do
+      config="config/${test}";
       sed -i 
            -e "/<dbtype>/c\<dbtype>${TYPE}</dbtype>"
            -e "/<driver>/c\<driver>${DRIVER}</driver>"
@@ -100,7 +104,7 @@ script:
            -e '/<password>/c\<password>travis</password>'
            -e '/<scalefactor>/c\<scalefactor>1</scalefactor>'
            -e '/<terminals>/c\<terminals>3</terminals>'
-           "config/${test}";
+           "${config}";
       testname=${test#sample_}; testname=${testname%_config.xml} ;
-      ./oltpbenchmark --bench "${testname}" --config config/"${test}"  --create true    --load true   --execute true ;
+      ./oltpbenchmark --bench "${testname}" --config "${config}"  --create true    --load true   --execute true ;
     done
