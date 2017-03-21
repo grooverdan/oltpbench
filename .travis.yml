@@ -50,6 +50,8 @@ addons:
 
 
 install: echo "Done"
+  - mysql -e "SELECT VERSION()"
+  - psql -c "SELECT VERSION()" -U travis
 
 before_script:
   - for db in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
@@ -59,8 +61,8 @@ before_script:
       psql -c "create database $db" -U postgres ;
       mysql -e "CREATE DATABASE IF NOT EXISTS $db" ;
     done
-  - psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis ;
-  - mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'";
+  - psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis
+  - mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'"
 
 # MySQL create user is probably one of the trust-container bugs for MySQL
 # Will probably need the following to set a password
