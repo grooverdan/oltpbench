@@ -50,7 +50,7 @@ addons:
 #  - mysql
 
 
-install: echo "Done"
+install:
   - mysql -e "SELECT VERSION()"
   - psql -c "SELECT VERSION()" -U travis
   - netstat -plant || ss -tn
