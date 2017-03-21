@@ -59,12 +59,12 @@ install:
     elif [ $DB == postgres ]; then psql -c "SELECT VERSION()" -U travis;
     fi
   - netstat -lant || ss -tn
-  - for db in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
+  - for dbname in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
                                 jpab seats auctionmark chbenchmark 
                                 voter linkbench sibench noop
                                 smallbank hyadapt ; do 
-      [ $DB == mariadb ] && mysql -e "CREATE DATABASE IF NOT EXISTS $db" ;
-      [ $DB == postgres ] && psql -c "create database $db" -U postgres ;
+      [ $DB == mariadb ] && mysql -e "CREATE DATABASE IF NOT EXISTS $dbname" ;
+      [ $DB == postgres ] && psql -c "create database $dbname" -U postgres ;
     done
   - if [ $DB == mariadb ]; then mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'";
     elif [ $DB == postgres ]; then psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis;
