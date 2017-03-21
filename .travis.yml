@@ -20,6 +20,10 @@ jdk:
 addons:
   postgresql: 9.6
 
+env:
+  - DB=postgres
+  - DB=mariadb
+
 #      postgresql: 9.7
 # https://docs.travis-ci.com/user/database-setup/#Using-a-different-PostgreSQL-Version
 
@@ -51,35 +55,45 @@ addons:
 
 
 install:
-  - mysql -e "SELECT VERSION()"
-  - psql -c "SELECT VERSION()" -U travis
-  - netstat -plant || ss -tn
-
-before_script:
+  - [ $DB == mariadb ] && mysql -e "SELECT VERSION()"
+  - [ $DB == postgres ] && psql -c "SELECT VERSION()" -U travis
+  - netstat -lant || ss -tn
   - for db in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
                                 jpab seats auctionmark chbenchmark 
                                 voter linkbench sibench noop
                                 smallbank hyadapt ; do 
-      psql -c "create database $db" -U postgres ;
-      mysql -e "CREATE DATABASE IF NOT EXISTS $db" ;
+      [ $DB == mariadb ] && mysql -e "CREATE DATABASE IF NOT EXISTS $db" ;
+      [ $DB == postgres ] && psql -c "create database $db" -U postgres ;
     done
-  - psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis
-  - mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'"
+  - [ $DB == mariadb ] && mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'"
+  - [ $DB == postgres ] && psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis
 
 # MySQL create user is probably one of the trust-container bugs for MySQL
 # Will probably need the following to set a password
 #  - mysql -e "SET PASSWORD FOR 'travis'@'localhost' = PASSWORD('travis')";
 
 # We pass a password here as <password></password> sends no password in the protocol
-# and therefore fails on MySQL.
+# rather than the blank one and therefore fails on MySQL.
 
 script:
   - ant junit
+  - if [ $DB == mariadb ]; then
+      URLBASE=jdbc:mysql://localhost:3306/
+      DRIVER=com.mysql.jdbc.Driver
+      TYPE=mysql
+    elif [ $DB == postgres ]; then
+      URLBASE=jdbc:postgresql://localhost:5432/
+      DRIVER=jdbc:org.postgresql.Driver
+      TYPE=postgres
+    fi
   - for test in sample_epinions_config.xml
                 sample_auctionmark_config.xml
                 sample_voter_config.xml;
     do
-      sed -i -e '/<DBUrl>/s/\/\/[^:]*:/\/\/localhost:/'
+      sed -i 
+           -e "/<dbtype>/c\<dbtype>${TYPE}</dbtype>"
+           -e "/<driver>/c\<driver>${DRIVER}</driver>"
+           -e "/<DBUrl>/s|jdbc:[^:]*://[^/]*|${URLBASE}|"
            -e '/<username>/c\<username>travis</username>'
            -e '/<password>/c\<password>travis</password>'
            -e '/<scalefactor>/c\<scalefactor>1</scalefactor>'
