@@ -11,6 +11,7 @@ jdk:
   - openjdk8
 
 # WRong syntax
+#addons:
 #  mariadb: 5.5
 #  mariadb: 10.0
 #  mariadb: 10.1
@@ -22,7 +23,7 @@ addons:
 
 env:
   - DB=postgres
-  - DB=mariadb
+  - DB=mysql
 
 #      postgresql: 9.7
 # https://docs.travis-ci.com/user/database-setup/#Using-a-different-PostgreSQL-Version
@@ -50,12 +51,11 @@ env:
 #      postgresql: 9.7
 
 # While mariadb addon isn't used
-#services:
-#  - mysql
-
+services:
+  - mysql
 
 install:
-  - if [ $DB == mariadb ]; then mysql -e "SELECT VERSION()";
+  - if [ $DB == mysql ]; then mysql -e "SELECT VERSION()";
     elif [ $DB == postgres ]; then psql -c "SELECT VERSION()" -U travis;
     fi
   - netstat -lant || ss -tn
@@ -63,10 +63,10 @@ install:
                                 jpab seats auctionmark chbenchmark 
                                 voter linkbench sibench noop
                                 smallbank hyadapt ; do 
-      [ $DB == mariadb ] && mysql -e "CREATE DATABASE IF NOT EXISTS $dbname" ;
+      [ $DB == mysql ] && mysql -e "CREATE DATABASE IF NOT EXISTS $dbname" ;
       [ $DB == postgres ] && psql -c "create database $dbname" -U postgres ;
     done
-  - if [ $DB == mariadb ]; then mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'";
+  - if [ $DB == mysql ]; then mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'";
     elif [ $DB == postgres ]; then psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis;
     fi
 
@@ -79,7 +79,7 @@ install:
 
 script:
   - ant junit
-  - if [ $DB == mariadb ]; then
+  - if [ $DB == mysql ]; then
       URLBASE=jdbc:mysql://localhost:3306 ;
       DRIVER=com.mysql.jdbc.Driver ;
       TYPE=mysql ;
