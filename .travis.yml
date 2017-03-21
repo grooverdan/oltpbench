@@ -12,34 +12,10 @@ jdk:
 
 # https://docs.travis-ci.com/user/database-setup/#Using-a-different-PostgreSQL-Version
 
-#      - https://github.com/oltpbenchmark/oltpbench/issues/137
+# - https://github.com/oltpbenchmark/oltpbench/issues/137
 #matrix:
 #  allow_failures:
 #    - jdk: oraclejdk9
-
-
-addons:
-  apt:
-    packages:
-      # Travis CI fast containers on dist=trusty have a bug with
-      # services/mysql not working without this.
-      # <https://github.com/travis-ci/travis-ci/issues/5837>
-      # <https://github.com/travis-ci/travis-ci/issues/6842>
-      - mysql-server-5.6
-      - mysql-client-core-5.6
-      - mysql-client-5.6
- 
-# mariadb not on trust-containers yet: https://github.com/travis-ci/travis-ci/issues/5837#issuecomment-283293637
-# 
-# mariadb: "10.2"
-addons:
-  postgresql: "9.6"
-
-# While mariadb addon isn't used
-services:
-  - mysql
-
-#matrix:
 #  include:
 #    - addons:
 #      mariadb: 5.5
@@ -58,10 +34,14 @@ services:
 #    - addons:
 #      postgresql: 9.7
 
+# While mariadb addon isn't used
+services:
+  - mysql
+
+
 install: echo "Done"
+
 before_script:
-  - dpkg -l | egrep -i '(mysql|mariadb)'
-  - ps -ef | grep mysqld
   - for db in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
                                 jpab seats auctionmark chbenchmark 
                                 voter linkbench sibench noop
@@ -71,7 +51,13 @@ before_script:
     done
   - psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis ;
   - mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'";
+
+# MySQL create user is probably one of the trust-container bugs for MySQL
+# Will probably need the following to set a password
 #  - mysql -e "SET PASSWORD FOR 'travis'@'localhost' = PASSWORD('travis')";
+
+# We pass a password here as <password></password> sends no password in the protocol
+# and therefore fails on MySQL.
 
 script:
   - ant junit
