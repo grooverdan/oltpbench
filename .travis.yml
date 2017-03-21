@@ -6,10 +6,11 @@ cache:
     - lib
 
 language: java
-    - jdk:
-        - oraclejdk8
-        - openjdk8
-        - oraclejdk9
+
+jdk:
+  - oraclejdk8
+  - openjdk8
+  - oraclejdk9
 
 # https://docs.travis-ci.com/user/database-setup/#Using-a-different-PostgreSQL-Version
 
