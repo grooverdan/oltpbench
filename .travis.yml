@@ -67,7 +67,7 @@ install:
       [ $DB == postgres ] && psql -c "create database $db" -U postgres ;
     done
   - if [ $DB == mariadb ]; then mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'";
-    elif [ $DB == postgres ] then psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis;
+    elif [ $DB == postgres ]; then psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis;
     fi
 
 # MySQL create user is probably one of the trust-container bugs for MySQL
