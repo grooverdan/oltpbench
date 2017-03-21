@@ -48,6 +48,17 @@ install: echo "Done"
 before_script:
   - psql -c 'create database oltpbench' -U postgres
   - mysql -e 'CREATE DATABASE IF NOT EXISTS oltpbench' 
+  - mysql -e "CREATE USER 'user'@'localhost' IDENTIFIED BY 'password'; GRANT ALL ON *.* TO 'user'@'localhost' WITH GRANT OPTION" 
 
 script:
   - ant junit
+  - for db in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb \
+                                jpab seats auctionmark chbenchmark \
+                                voter linkbench sibench noop \
+                                smallbank hyadapt ; do \
+      psql -c "create database $db" -U postgres ; \
+      mysql -e "CREATE DATABASE IF NOT EXISTS $db" ; \
+    done
+  - sed -i -e '/<DBUrl>/s/server/localhost/' \
+           -e '/<scalefactorconfig>/s/[0-9]*/1/' /sample_epinions_config.xml
+  -  ./oltpbenchmark --bench epinions --config config/sample_epinions_config.xml  --create true    --load true   --execute true
