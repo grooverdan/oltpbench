@@ -63,6 +63,6 @@ script:
            -e '/<username>/c\<username>travis</username>'
            -e '/<password>/c\<password></password>'
            -e '/<scalefactor>/s/[0-9]*/1/' "config/${test}";
-      testname=${test#sample_%}; testname=${testname%_config.xml}} ;
-      ./oltpbenchmark --bench "${testname}" --config config/${test}  --create true    --load true   --execute true ;
+      testname=${test#sample_%}; testname=${testname%_config.xml} ;
+      ./oltpbenchmark --bench "${testname}" --config config/"${test}"  --create true    --load true   --execute true ;
     done
