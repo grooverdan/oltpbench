@@ -69,7 +69,7 @@ before_script:
       psql -c "create database $db" -U postgres ;
       mysql -e "CREATE DATABASE IF NOT EXISTS $db" ;
     done
-  - psql -c "ALTER USER CURRENT_USER SET PASSWORD TO 'travis'" -U travis ;
+  - psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis ;
   - mysql -e "SET PASSWORD FOR travis@localhost PASSWORD('travis')";
 
 script:
