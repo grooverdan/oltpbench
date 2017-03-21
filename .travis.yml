@@ -55,13 +55,15 @@ before_script:
       psql -c "create database $db" -U postgres ;
       mysql -e "CREATE DATABASE IF NOT EXISTS $db" ;
     done
+  - psql -c 'ALTER USER travis SET PASSWORD "travis"' -U postgres ;
+  - mysql -e "SET PASSWORD FOR travis@localhost PASSWORD('travis')";
 
 script:
   - ant junit
   - for test in sample_epinions_config.xml  sample_auctionmark_config.xml sample_voter_config.xml; do
       sed -i -e '/<DBUrl>/s/server/localhost/'
            -e '/<username>/c\<username>travis</username>'
-           -e '/<password>/c\<password></password>'
+           -e '/<password>/c\<password>travis</password>'
            -e '/<scalefactor>/s/[0-9]*/1/' "config/${test}";
       testname=${test#sample_}; testname=${testname%_config.xml} ;
       ./oltpbenchmark --bench "${testname}" --config config/"${test}"  --create true    --load true   --execute true ;
