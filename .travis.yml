@@ -73,8 +73,11 @@ before_script:
 
 script:
   - ant junit
-  - for test in sample_epinions_config.xml  sample_auctionmark_config.xml sample_voter_config.xml; do
-      sed -i -e '/<DBUrl>/s/server/localhost/'
+  - for test in sample_epinions_config.xml
+                sample_auctionmark_config.xml
+                sample_voter_config.xml;
+    do
+      sed -i -e '/<DBUrl>/s/\/\/[^:]*:/\/\/localhost:/'
            -e '/<username>/c\<username>travis</username>'
            -e '/<password>/c\<password>travis</password>'
            -e '/<scalefactor>/c\<scalefactor>1</scalefactor>'
