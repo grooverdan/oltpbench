@@ -11,14 +11,14 @@ jdk:
   - openjdk8
 
 # WRong syntax
-#addons:
 #  mariadb: 5.5
 #  mariadb: 10.0
 #  mariadb: 10.1
 #  mariadb: 10.2
 #  postgresql: 9.4
 #  postgresql: 9.5
-#  postgresql: 9.6
+addons:
+  postgresql: 9.6
 
 #      postgresql: 9.7
 # https://docs.travis-ci.com/user/database-setup/#Using-a-different-PostgreSQL-Version
