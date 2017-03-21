@@ -80,11 +80,11 @@ install:
 script:
   - ant junit
   - if [ $DB == mariadb ]; then
-      URLBASE=jdbc:mysql://localhost:3306/ ;
+      URLBASE=jdbc:mysql://localhost:3306 ;
       DRIVER=com.mysql.jdbc.Driver ;
       TYPE=mysql ;
     elif [ $DB == postgres ]; then
-      URLBASE=jdbc:postgresql://localhost:5432/ ;
+      URLBASE=jdbc:postgresql://localhost:5432 ;
       DRIVER=jdbc:org.postgresql.Driver ;
       TYPE=postgres ;
     fi
