@@ -53,6 +53,7 @@ jdk:
 install: echo "Done"
   - mysql -e "SELECT VERSION()"
   - psql -c "SELECT VERSION()" -U travis
+  - netstat -plant || ss -tn
 
 before_script:
   - for db in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
