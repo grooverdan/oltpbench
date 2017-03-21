@@ -19,7 +19,7 @@ jdk:
 
 addons:
   mariadb: "10.2"
-  postgresql: "9.7"
+  postgresql: "9.6"
 
 #matrix:
 #  include:
@@ -52,13 +52,18 @@ before_script:
 
 script:
   - ant junit
-  - for db in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb \
-                                jpab seats auctionmark chbenchmark \
-                                voter linkbench sibench noop \
-                                smallbank hyadapt ; do \
-      psql -c "create database $db" -U postgres ; \
-      mysql -e "CREATE DATABASE IF NOT EXISTS $db" ; \
+  - for db in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
+                                jpab seats auctionmark chbenchmark 
+                                voter linkbench sibench noop
+                                smallbank hyadapt ; do 
+      psql -c "create database $db" -U postgres ;
+      mysql -e "CREATE DATABASE IF NOT EXISTS $db" ;
     done
-  - sed -i -e '/<DBUrl>/s/server/localhost/' \
-           -e '/<scalefactorconfig>/s/[0-9]*/1/' /sample_epinions_config.xml
-  -  ./oltpbenchmark --bench epinions --config config/sample_epinions_config.xml  --create true    --load true   --execute true
+  - for test in sample_epinions_config.xml  sample_auctionmark_config.xml sample_voter_config.xml; do
+      sed -i -e '/<DBUrl>/s/server/localhost/'
+           -e '/<username>/c\<username>travis</username>'
+           -e '/<password>/c\<password></password>'
+           -e '/<scalefactor>/s/[0-9]*/1/' "config/${test}";
+      testname=${test#sample_%}; testname=${testname%_config.xml}} ;
+      ./oltpbenchmark --bench "${testname}" --config config/${test}  --create true    --load true   --execute true ;
+    done
