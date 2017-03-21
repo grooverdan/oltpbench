@@ -61,7 +61,7 @@ install:
   - netstat -lant || ss -tn
   - set -x -v; for dbname in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
                                 jpab seats auctionmark chbenchmark 
-                                voter linkbench sibench noop
+                                voter linkdb sibench noop
                                 smallbank hyadapt ; do 
       [ $DB == mysql ] && mysql -e "CREATE DATABASE IF NOT EXISTS $dbname" ;
       [ $DB == postgres ] && psql -c "create database $dbname" -U postgres ;
