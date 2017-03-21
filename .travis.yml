@@ -23,6 +23,10 @@ jdk:
 addons:
   postgresql: "9.6"
 
+# While mariadb addon isn't used
+services:
+  - mysql
+
 #matrix:
 #  include:
 #    - addons:
@@ -41,10 +45,6 @@ addons:
 #      postgresql: 9.6
 #    - addons:
 #      postgresql: 9.7
-
-#services:
-#  - mysql
-#  - postgres
 
 install: echo "Done"
 before_script:
