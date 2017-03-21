@@ -104,6 +104,7 @@ script:
            -e '/<password>/c\<password>travis</password>'
            -e '/<scalefactor>/c\<scalefactor>1</scalefactor>'
            -e '/<terminals>/c\<terminals>3</terminals>'
+           -e '/<isolation>/c\<isolation>TRANSACTION_READ_COMMITTED</isolation>'
            "${config}";
       testname=${test#sample_}; testname=${testname%_config.xml} ;
       ./oltpbenchmark --bench "${testname}" --config "${config}"  --create true    --load true   --execute true ;
