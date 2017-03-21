@@ -17,8 +17,10 @@ jdk:
 #  allow_failures:
 #    - jdk: oraclejdk9
 
+# mariadb not on trust-containers yet: https://github.com/travis-ci/travis-ci/issues/5837#issuecomment-283293637
+# 
+# mariadb: "10.2"
 addons:
-  mariadb: "10.2"
   postgresql: "9.6"
 
 #matrix:
@@ -46,8 +48,6 @@ addons:
 
 install: echo "Done"
 before_script:
-  - dpkg -L mariadb-server-core-10.2 mariadb-server-10.2
-  - ps -ef | grep mysqld
   - for db in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
                                 jpab seats auctionmark chbenchmark 
                                 voter linkbench sibench noop
