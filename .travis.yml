@@ -18,8 +18,8 @@ jdk:
 #    - jdk: oraclejdk9
 
 addons:
-  - mariadb: 10.2
-  - postgresql: 9.7
+  mariadb: "10.2"
+  postgresql: "9.7"
 
 #matrix:
 #  include:
