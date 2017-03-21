@@ -40,9 +40,9 @@ addons:
 #    - addons:
 #      postgresql: 9.7
 
-services:
-  - mysql
-  - postgres
+#services:
+#  - mysql
+#  - postgres
 
 install: echo "Done"
 before_script:
