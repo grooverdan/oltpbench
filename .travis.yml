@@ -46,12 +46,8 @@ addons:
 
 install: echo "Done"
 before_script:
-  - psql -c 'create database oltpbench' -U postgres
-  - mysql -e 'CREATE DATABASE IF NOT EXISTS oltpbench' 
-  - mysql -e "CREATE USER 'user'@'localhost' IDENTIFIED BY 'password'; GRANT ALL ON *.* TO 'user'@'localhost' WITH GRANT OPTION" 
-
-script:
-  - ant junit
+  - dpkg -L mariadb-server-core-10.2 mariadb-server-10.2
+  - ps -ef | grep mysqld
   - for db in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
                                 jpab seats auctionmark chbenchmark 
                                 voter linkbench sibench noop
@@ -59,6 +55,9 @@ script:
       psql -c "create database $db" -U postgres ;
       mysql -e "CREATE DATABASE IF NOT EXISTS $db" ;
     done
+
+script:
+  - ant junit
   - for test in sample_epinions_config.xml  sample_auctionmark_config.xml sample_voter_config.xml; do
       sed -i -e '/<DBUrl>/s/server/localhost/'
            -e '/<username>/c\<username>travis</username>'
