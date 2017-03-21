@@ -18,17 +18,16 @@ jdk:
 #    - jdk: oraclejdk9
 
 
-apt:
-  packages:
-    # Travis CI fast containers on dist=trusty have a bug with
-    # services/mysql not working without this.
-    # <https://github.com/travis-ci/travis-ci/issues/5837>
-    # <https://github.com/travis-ci/travis-ci/issues/6853>
-    # <https://github.com/travis-ci/travis-ci/issues/6842>
-    - mysql-server-5.6
-    - mysql-client-core-5.6
-    - mysql-client-5.6
-
+addons:
+  apt:
+    packages:
+      # Travis CI fast containers on dist=trusty have a bug with
+      # services/mysql not working without this.
+      # <https://github.com/travis-ci/travis-ci/issues/5837>
+      # <https://github.com/travis-ci/travis-ci/issues/6842>
+      - mysql-server-5.6
+      - mysql-client-core-5.6
+      - mysql-client-5.6
  
 # mariadb not on trust-containers yet: https://github.com/travis-ci/travis-ci/issues/5837#issuecomment-283293637
 # 
@@ -62,7 +61,7 @@ services:
 install: echo "Done"
 before_script:
   - dpkg -l | egrep -i '(mysql|mariadb)'
-  - grep  -C 10 -r socket /etc/my*
+  - ps -ef | grep mysqld
   - for db in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
                                 jpab seats auctionmark chbenchmark 
                                 voter linkbench sibench noop
