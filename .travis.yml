@@ -20,14 +20,14 @@ jdk:
 
 apt:
   packages:
-  # Travis CI fast containers on dist=trusty have a bug with
-  # services/mysql not working without this.
-  # <https://github.com/travis-ci/travis-ci/issues/5837>
-  # <https://github.com/travis-ci/travis-ci/issues/6853>
-  # <https://github.com/travis-ci/travis-ci/issues/6842>
-  - mysql-server-5.6
-  - mysql-client-core-5.6
-  - mysql-client-5.6
+    # Travis CI fast containers on dist=trusty have a bug with
+    # services/mysql not working without this.
+    # <https://github.com/travis-ci/travis-ci/issues/5837>
+    # <https://github.com/travis-ci/travis-ci/issues/6853>
+    # <https://github.com/travis-ci/travis-ci/issues/6842>
+    - mysql-server-5.6
+    - mysql-client-core-5.6
+    - mysql-client-5.6
 
  
 # mariadb not on trust-containers yet: https://github.com/travis-ci/travis-ci/issues/5837#issuecomment-283293637
