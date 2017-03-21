@@ -70,7 +70,8 @@ before_script:
       mysql -e "CREATE DATABASE IF NOT EXISTS $db" ;
     done
   - psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis ;
-  - mysql -e "SET PASSWORD FOR 'travis'@'localhost' = PASSWORD('travis')";
+  - mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'";
+#  - mysql -e "SET PASSWORD FOR 'travis'@'localhost' = PASSWORD('travis')";
 
 script:
   - ant junit
