@@ -48,6 +48,8 @@ addons:
 
 install: echo "Done"
 before_script:
+  - dpkg -l | egrep -i '(mysql|mariadb)'
+  - grep  -C 10 -r socket /etc/my*
   - for db in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
                                 jpab seats auctionmark chbenchmark 
                                 voter linkbench sibench noop
