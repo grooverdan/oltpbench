@@ -55,8 +55,9 @@ env:
 
 
 install:
-  - [ $DB == mariadb ] && mysql -e "SELECT VERSION()"
-  - [ $DB == postgres ] && psql -c "SELECT VERSION()" -U travis
+  - if [ $DB == mariadb ]; then mysql -e "SELECT VERSION()"
+    elif [ $DB == postgres ]; then psql -c "SELECT VERSION()" -U travis
+    fi
   - netstat -lant || ss -tn
   - for db in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
                                 jpab seats auctionmark chbenchmark 
@@ -65,8 +66,9 @@ install:
       [ $DB == mariadb ] && mysql -e "CREATE DATABASE IF NOT EXISTS $db" ;
       [ $DB == postgres ] && psql -c "create database $db" -U postgres ;
     done
-  - [ $DB == mariadb ] && mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'"
-  - [ $DB == postgres ] && psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis
+  - if [ $DB == mariadb ]; then mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'"
+    elif [ $DB == postgres ] then psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis
+    fi
 
 # MySQL create user is probably one of the trust-container bugs for MySQL
 # Will probably need the following to set a password
