@@ -59,7 +59,7 @@ install:
     elif [ $DB == postgres ]; then psql -c "SELECT VERSION()" -U travis;
     fi
   - netstat -lant || ss -tn
-  - for dbname in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
+  - set -x -v; for dbname in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
                                 jpab seats auctionmark chbenchmark 
                                 voter linkbench sibench noop
                                 smallbank hyadapt ; do 
