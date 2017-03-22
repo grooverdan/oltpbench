@@ -8,6 +8,7 @@ cache:
 language: java
 jdk:
   - oraclejdk8
+  - oraclejdk9
   - openjdk8
 
 # WRong syntax
@@ -22,7 +23,7 @@ addons:
   postgresql: 9.6
 
 env:
-  - DB=postgres TEST=junit
+  - TEST=junit
   - DB=mysql    TEST=epinions
   - DB=postgres TEST=epinions
   - DB=mysql    TEST=tatp
@@ -58,14 +59,24 @@ env:
   - DB=mysql    TEST=resourcestresser
   - DB=postgres TEST=resourcestresser
 
-#      postgresql: 9.7
-# https://docs.travis-ci.com/user/database-setup/#Using-a-different-PostgreSQL-Version
-
 # - https://github.com/oltpbenchmark/oltpbench/issues/137
-#matrix:
-#  allow_failures:
-#    - jdk: oraclejdk9
-#  include:
+matrix:
+  allow_failures:
+    - jdk: oraclejdk9
+    - env: DB=mysql
+  exclude:
+    - env: DB=mysql
+      jdk: oraclejdk8
+    - env: DB=postgres
+      jdk: oraclejdk8
+    - env: DB=mysql
+      jdk: oraclejdk9
+    - env: DB=postgres
+      jdk: oraclejdk9
+
+
+
+#include:
 #    - addons:
 #      mariadb: 5.5
 #    - addons:
@@ -80,8 +91,10 @@ env:
 #      postgresql: 9.5
 #    - addons:
 #      postgresql: 9.6
-#    - addons:
-#      postgresql: 9.7
+##    - addons:
+##      postgresql: 9.7
+# https://docs.travis-ci.com/user/database-setup/#Using-a-different-PostgreSQL-Version
+
 
 # While mariadb addon isn't used
 services:
