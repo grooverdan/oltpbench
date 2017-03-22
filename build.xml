@@ -2,7 +2,7 @@
 <project basedir="." default="build" name="benchmark">
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
-    <property name="javac.target" value="1.7"/>
+    <property name="javac.target" value="1.9"/>
     <property name="javac.source" value="1.7"/>
 
     <!-- *************************************** CONFIGURATION *************************************** -->
@@ -154,7 +154,7 @@
                 <jvmarg value="-Xmx2048m"/>
                 <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError"/>
                 
-                <formatters/>
+                <formatter type="plain" usefile="false" />
                 <batchtest todir="${build.testoutput.dir}">
                     <tests/>
                 </batchtest>
