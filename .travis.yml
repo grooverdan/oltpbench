@@ -58,8 +58,7 @@ install:
   - if [ $DB == mysql ]; then mysql -e "SELECT VERSION()";
     elif [ $DB == postgres ]; then psql -c "SELECT VERSION()" -U travis;
     fi
-  - netstat -lant || ss -tn
-  - set -x -v; for dbname in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
+  - for dbname in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
                                 jpab seats auctionmark chbenchmark 
                                 voter linkdb sibench noop
                                 smallbank hyadapt ; do 
