@@ -24,55 +24,34 @@ addons:
 
 env:
   - TEST=junit
-  - DB=mysql    TEST=epinions
-  - DB=postgres TEST=epinions
-  - DB=mysql    TEST=tatp
-  - DB=postgres TEST=tatp
-  - DB=mysql    TEST=linkbench
-  - DB=postgres TEST=linkbench
-  - DB=mysql    TEST=tpcc
-  - DB=postgres TEST=tpcc
-  - DB=mysql    TEST=voter
-  - DB=postgres TEST=voter
-  - DB=mysql    TEST=auctionmark
-  - DB=postgres TEST=auctionmark
-  - DB=mysql    TEST=wikipedia
-  - DB=postgres TEST=wikipedia
-  - DB=mysql    TEST=twitter
-  - DB=postgres TEST=twitter
-  - DB=mysql    TEST=ycsb
-  - DB=postgres TEST=ycsb
-  - DB=mysql    TEST=jpab
-  - DB=postgres TEST=jpab
-  - DB=mysql    TEST=seats
-  - DB=postgres TEST=seats
-  - DB=mysql    TEST=chbenchmark
-  - DB=postgres TEST=chbenchmark
-  - DB=mysql    TEST=sibench
-  - DB=postgres TEST=sibench
-  - DB=mysql    TEST=noop
-  - DB=postgres TEST=noop
-  - DB=mysql    TEST=smallbank
-  - DB=postgres TEST=smallbank
-  - DB=mysql    TEST=hyadapt
-  - DB=postgres TEST=hyadapt
-  - DB=mysql    TEST=resourcestresser
-  - DB=postgres TEST=resourcestresser
+  - TEST=epinions
+  - TEST=tatp
+  - TEST=linkbench
+  - TEST=tpcc
+  - TEST=voter
+  - TEST=auctionmark
+  - TEST=wiki
+  - TEST=ycsb
+  - TEST=jpab
+  - TEST=seats
+  - TEST=sibench
+  - TEST=noop
+  - TEST=smallbank
+  - TEST=resourcestresser
 
-# - https://github.com/oltpbenchmark/oltpbench/issues/137
+# Missing sample config file
+#  - TEST=chbenchmark
+#
+# Missing sample config
+#  - TEST=hyadapt
+#
+# Missing config/traces/tweets.txt
+#  - TEST=twitter
+
+# oraclejdk9 failures - https://github.com/oltpbenchmark/oltpbench/issues/137
 matrix:
   allow_failures:
     - jdk: oraclejdk9
-    - env: DB=mysql
-  exclude:
-    - env: DB=mysql
-      jdk: oraclejdk8
-    - env: DB=postgres
-      jdk: oraclejdk8
-    - env: DB=mysql
-      jdk: oraclejdk9
-    - env: DB=postgres
-      jdk: oraclejdk9
 
 
 
@@ -101,6 +80,12 @@ services:
   - mysql
 
 install:
+  - echo $TRAVIS_JDK_VERSION
+  - if [ $TRAVIS_JDK_VERSION == oraclejdk8 ]; then
+      DB=mysql ;
+    else
+      DB=postgres ;
+    fi
   - if [ $DB == mysql ]; then mysql -e "SELECT VERSION()";
       mysql -e "CREATE DATABASE IF NOT EXISTS ${TEST}" ;
       mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'";
