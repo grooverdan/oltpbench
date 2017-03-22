@@ -22,8 +22,41 @@ addons:
   postgresql: 9.6
 
 env:
-  - DB=postgres
-  - DB=mysql
+  - DB=postgres TEST=junit
+  - DB=mysql    TEST=epinions
+  - DB=postgres TEST=epinions
+  - DB=mysql    TEST=tatp
+  - DB=postgres TEST=tatp
+  - DB=mysql    TEST=linkbench
+  - DB=postgres TEST=linkbench
+  - DB=mysql    TEST=tpcc
+  - DB=postgres TEST=tpcc
+  - DB=mysql    TEST=voter
+  - DB=postgres TEST=voter
+  - DB=mysql    TEST=auctionmark
+  - DB=postgres TEST=auctionmark
+  - DB=mysql    TEST=wikipedia
+  - DB=postgres TEST=wikipedia
+  - DB=mysql    TEST=twitter
+  - DB=postgres TEST=twitter
+  - DB=mysql    TEST=ycsb
+  - DB=postgres TEST=ycsb
+  - DB=mysql    TEST=jpab
+  - DB=postgres TEST=jpab
+  - DB=mysql    TEST=seats
+  - DB=postgres TEST=seats
+  - DB=mysql    TEST=chbenchmark
+  - DB=postgres TEST=chbenchmark
+  - DB=mysql    TEST=sibench
+  - DB=postgres TEST=sibench
+  - DB=mysql    TEST=noop
+  - DB=postgres TEST=noop
+  - DB=mysql    TEST=smallbank
+  - DB=postgres TEST=smallbank
+  - DB=mysql    TEST=hyadapt
+  - DB=postgres TEST=hyadapt
+  - DB=mysql    TEST=resourcestresser
+  - DB=postgres TEST=resourcestresser
 
 #      postgresql: 9.7
 # https://docs.travis-ci.com/user/database-setup/#Using-a-different-PostgreSQL-Version
@@ -56,29 +89,20 @@ services:
 
 install:
   - if [ $DB == mysql ]; then mysql -e "SELECT VERSION()";
+      mysql -e "CREATE DATABASE IF NOT EXISTS ${TEST}" ;
+      mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'";
     elif [ $DB == postgres ]; then psql -c "SELECT VERSION()" -U travis;
-    fi
-  - for dbname in tpcc tpch tatp wikipedia resourcestresser twitter epinions ycsb
-                                jpab seats auctionmark chbenchmark 
-                                voter linkdb sibench noop
-                                smallbank hyadapt ; do 
-      if [ $DB == mysql ]; then mysql -e "CREATE DATABASE IF NOT EXISTS $dbname" ;
-      elif [ $DB == postgres ]; then psql -c "create database $dbname" -U postgres ;
-      fi;
-    done
-  - if [ $DB == mysql ]; then mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'";
-    elif [ $DB == postgres ]; then psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis;
+      psql -c "create database $TEST" -U postgres ;
+      psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis;
     fi
 
 # MySQL create user is probably one of the trust-container bugs for MySQL
 # Will probably need the following to set a password
-#  - mysql -e "SET PASSWORD FOR 'travis'@'localhost' = PASSWORD('travis')";
 
 # We pass a password here as <password></password> sends no password in the protocol
 # rather than the blank one and therefore fails on MySQL.
 
-script:
-  - ant junit
+before_script:
   - if [ $DB == mysql ]; then
       URLBASE=jdbc:mysql://localhost:3306 ;
       DRIVER=com.mysql.jdbc.Driver ;
@@ -88,24 +112,21 @@ script:
       DRIVER=org.postgresql.Driver ;
       TYPE=postgres ;
     fi
-  - for test in sample_epinions_config.xml
-                sample_tatp_config.xml
-                sample_linkbench_config.xml
-                sample_tpcc_config.xml
-                sample_auctionmark_config.xml
-                sample_voter_config.xml;
-    do
-      config="config/${test}";
-      sed -i 
+
+script:
+  - if [ $TEST == junit ]; then
+      ant junit;
+    else
+      ant build;
+      sed -i
            -e "/<dbtype>/c\<dbtype>${TYPE}</dbtype>"
            -e "/<driver>/c\<driver>${DRIVER}</driver>"
-           -e "/<DBUrl>/s|jdbc:[^:]*://[^/]*|${URLBASE}|"
+           -e "/<DBUrl>/c\<DBUrl>${URLBASE}/${TEST}</DBUrl>"
            -e '/<username>/c\<username>travis</username>'
            -e '/<password>/c\<password>travis</password>'
            -e '/<scalefactor>/c\<scalefactor>1</scalefactor>'
            -e '/<terminals>/c\<terminals>3</terminals>'
            -e '/<isolation>/c\<isolation>TRANSACTION_READ_COMMITTED</isolation>'
            "${config}";
-      testname=${test#sample_}; testname=${testname%_config.xml} ;
-      ./oltpbenchmark --bench "${testname}" --config "${config}"  --create true    --load true   --execute true ;
-    done
+      ./oltpbenchmark --bench "${TEST}" --config "${config}"  --create true    --load true   --execute true ;
+    fi
