@@ -63,9 +63,9 @@ install:
                                 jpab seats auctionmark chbenchmark 
                                 voter linkdb sibench noop
                                 smallbank hyadapt ; do 
-      [ $DB == mysql ] && mysql -e "CREATE DATABASE IF NOT EXISTS $dbname" ;
-      [ $DB == postgres ] && psql -c "create database $dbname" -U postgres ;
-      true;
+      if [ $DB == mysql ]; then mysql -e "CREATE DATABASE IF NOT EXISTS $dbname" ;
+      elif [ $DB == postgres ]; then psql -c "create database $dbname" -U postgres ;
+      fi;
     done
   - if [ $DB == mysql ]; then mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY 'travis'; GRANT ALL ON *.* TO 'travis'@'localhost'";
     elif [ $DB == postgres ]; then psql -c "ALTER USER CURRENT_USER WITH PASSWORD 'travis'" -U travis;
