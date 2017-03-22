@@ -1,6 +1,7 @@
 dist: trusty
 sudo: false
 
+# lib contains jar files to support running tests
 cache:
   directories:
     - lib
@@ -11,14 +12,52 @@ jdk:
   - oraclejdk9
   - openjdk8
 
-# WRong syntax
-#addons:
-#  mariadb: 5.5
-#  mariadb: 10.0
-#  mariadb: 10.1
-#  mariadb: 10.2
-#  postgresql: 9.4
-#  postgresql: 9.5
+# oraclejdk9 failures - https://github.com/oltpbenchmark/oltpbench/issues/137
+matrix:
+  allow_failures:
+    - jdk: oraclejdk9
+
+# Currently oraclejdk8 is mapped to DB=mysql and the
+# others are DB=postgres.
+#
+# a test env of: - DB=mysql  TEST=tatp
+# duplicated for postgres would of been nice however
+# attempting to limit non-junit tests to single jdk with
+# matrix:
+#   exclude:
+#     - jdk: oraclejdk8
+#       env: DB=mysql
+#     - jdk: oraclejdk9
+#       env: DB=mysql
+#     - jdk: oraclejdk8
+#       env: DB=postgres
+#     - jdk: oraclejdk9
+#       env: DB=postgres
+# Failed to exclude any elements.
+
+# Possibilities for future:
+# matrix:
+#   include:
+#    - addons:
+#      mariadb: 5.5
+#    - addons:
+#      mariadb: 10.0
+#    - addons:
+#      mariadb: 10.1
+#    - addons:
+#      mariadb: 10.2
+#    - addons:
+#      postgresql: 9.4
+#    - addons:
+#      postgresql: 9.5
+#    - addons:
+#      postgresql: 9.6
+##    - addons:
+##      postgresql: 9.7
+# https://docs.travis-ci.com/user/database-setup/#Using-a-different-PostgreSQL-Version
+# MariaDB wasn't supported on trusty-containers at time of writing
+# This syntax may not be correct.
+
 addons:
   postgresql: 9.6
 
@@ -48,34 +87,8 @@ env:
 # Missing config/traces/tweets.txt
 #  - TEST=twitter
 
-# oraclejdk9 failures - https://github.com/oltpbenchmark/oltpbench/issues/137
-matrix:
-  allow_failures:
-    - jdk: oraclejdk9
 
-
-
-#include:
-#    - addons:
-#      mariadb: 5.5
-#    - addons:
-#      mariadb: 10.0
-#    - addons:
-#      mariadb: 10.1
-#    - addons:
-#      mariadb: 10.2
-#    - addons:
-#      postgresql: 9.4
-#    - addons:
-#      postgresql: 9.5
-#    - addons:
-#      postgresql: 9.6
-##    - addons:
-##      postgresql: 9.7
-# https://docs.travis-ci.com/user/database-setup/#Using-a-different-PostgreSQL-Version
-
-
-# While mariadb addon isn't used
+# While mariadb addon isn't used. Remove if using a addon: mariadb
 services:
   - mysql
 
@@ -129,3 +142,7 @@ script:
            "${config}";
       ./oltpbenchmark --bench "${TEST}" --config "${config}"  --create true    --load true   --execute true ;
     fi
+
+
+# With tests, scalefactor and terminals are just to reduce load on travis
+# isolation READ_COMMITTED as the TRANSACTIONAL default caused too many failures for now.
