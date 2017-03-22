@@ -93,7 +93,7 @@ services:
   - mysql
 
 install:
-  - echo $TRAVIS_JDK_VERSION
+  - cat ~/.my.cnf || true
   - if [ $TRAVIS_JDK_VERSION == oraclejdk8 ]; then
       DB=mysql ;
     else
