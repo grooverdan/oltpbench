@@ -76,6 +76,7 @@ env:
   - TEST=noop
   - TEST=smallbank
   - TEST=resourcestresser
+  - TEST=twitter
 
 # Missing sample config file
 #  - TEST=chbenchmark
@@ -83,9 +84,6 @@ env:
 # Missing sample config
 #  - TEST=hyadapt
 #
-# Missing config/traces/tweets.txt
-#  - TEST=twitter
-
 
 # While mariadb addon isn't used. Remove if using a addon: mariadb
 services:
