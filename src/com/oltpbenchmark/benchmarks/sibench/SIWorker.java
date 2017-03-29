@@ -65,7 +65,7 @@ public class SIWorker extends Worker<SIBenchmark> {
     private void updateRecord() throws SQLException {
         UpdateRecord proc = this.getProcedure(UpdateRecord.class);
         assert (proc != null);
-        int id = updateRecordIdGenerator.nextInt(this.recordCount);
+        int id = updateRecordIdGenerator.nextInt(this.recordCount+1);
         proc.run(conn, id);
     }
 }
