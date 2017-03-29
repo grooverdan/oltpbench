@@ -140,7 +140,7 @@ public class WikipediaLoader extends Loader<WikipediaBenchmark> {
         Zipf z_pages = new Zipf(rng(), 1, this.num_pages, WikipediaConstants.USER_ID_SIGMA);
         
         PrintStream ps = new PrintStream(file);
-        PrintStream psdebug;
+        PrintStream psdebug = null;
         if (filedebug != null)
              psdebug = new PrintStream(filedebug);
         for (int i = 0, cnt = (b.getTraceSize() * 1000); i < cnt; i++) {
