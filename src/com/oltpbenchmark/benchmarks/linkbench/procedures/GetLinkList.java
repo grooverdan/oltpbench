@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
@@ -65,33 +66,22 @@ public class GetLinkList extends Procedure{
         
         ResultSet rs = stmt.executeQuery();
 
-        // Find result set size
-        // be sure we fast forward to find result set size
-        assert(rs.getType() != ResultSet.TYPE_FORWARD_ONLY);
-        rs.last();
-        int count = rs.getRow();
-        rs.beforeFirst();
+
+        // Fetch the link data
+        ArrayList<Link> links = new ArrayList<Link>();
+        int count = 0;
+        while (rs.next()) {
+          links.add(createLinkFromRow(rs));
+          count++;
+        }
+        rs.close();
 
         if (LOG.isTraceEnabled()) {
           LOG.trace("Range lookup result: " + id1 + "," + link_type +
                              " is " + count);
         }
-        if (count == 0) {
-          return null;
-        }
 
-        // Fetch the link data
-        Link links[] = new Link[count];
-        int i = 0;
-        while (rs.next()) {
-          Link l = createLinkFromRow(rs);
-          links[i] = l;
-          i++;
-        }
-        assert(!rs.next()); // check done
-        rs.close();
-        assert(i == count);
-        return links;
+        return links.toArray(new Link[links.size()]);
     }
     // lookup using just id1, type
 
