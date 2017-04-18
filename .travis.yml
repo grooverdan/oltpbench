@@ -61,6 +61,7 @@ addons:
   postgresql: 9.6
 
 env:
+  - TEST=linkbench
   - TEST=junit
   - TEST=epinions
   - TEST=tatp
@@ -87,9 +88,6 @@ env:
 #
 # Not fully implemented
 #  - TEST=jpab
-#
-# Works only for MySQL at this time
-#  - TEST=linkbench
 #
 
 # While mariadb addon isn't used. Remove if using a addon: mariadb

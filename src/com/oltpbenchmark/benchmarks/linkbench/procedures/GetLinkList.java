@@ -43,7 +43,7 @@ public class GetLinkList extends Procedure{
                     " and time <= ?" +
                     " and visibility = ?" +
                     " order by time desc " +
-                    " limit ?, ?"
+                    " limit ? offset ?"
     );
 
     public Link[] run(Connection conn, long id1, long link_type,
@@ -56,8 +56,8 @@ public class GetLinkList extends Procedure{
         stmt.setLong(3, minTimestamp);          
         stmt.setLong(4, maxTimestamp);                   
         stmt.setLong(5, LinkBenchConstants.VISIBILITY_DEFAULT);
-        stmt.setInt(6, offset);
-        stmt.setInt(7, limit);
+        stmt.setInt(6, limit);
+        stmt.setInt(7, offset);
         
         if (LOG.isTraceEnabled()) {
             LOG.trace("Query is " + stmt);
